@@ -7,6 +7,7 @@ import '../widgets/custom_bottom_nav.dart';
 import 'duas_screen.dart';
 import 'reminder_screen.dart';
 import 'profile_screen.dart';
+import 'wall_of_duas_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final String userName;
@@ -30,21 +31,22 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // Sample dua data - in a real app, this would come from a database
-  final String duaOfTheDay = "رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ";
-  final String duaTranslation = "Our Lord, give us good in this world and good in the next world, and save us from the punishment of the Fire.";
+  final String duaArabic = "اللَّهُمَّ إِنَّكَ عَفُوٌّ تُحِبُّ الْعَفْوَ فَاعْفُ عَنِّي";
+  final String duaTransliteration = "Allahuma innaka affuwun tuhibun afwa fafu anni";
+  final String duaTranslation = "Ya Allah, You are the forgiver, you love to forgive, so forgive me";
 
   final List<Map<String, dynamic>> recommendations = [
     {
       'title': 'Dua for anxiety',
-      'icon': Icons.healing,
+      'icon': Icons.sentiment_satisfied_alt,
     },
     {
       'title': 'Dua for gratitude',
-      'icon': Icons.favorite,
+      'icon': Icons.sentiment_satisfied_alt,
     },
     {
       'title': 'The wall of Duas',
-      'icon': Icons.forum,
+      'icon': Icons.volunteer_activism,
     },
   ];
 
@@ -103,13 +105,22 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _onRecommendationTap(String title) {
-    // Placeholder for recommendation detail screen
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Opening $title'),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+    if (title == 'The wall of Duas') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const WallOfDuasScreen(),
+        ),
+      );
+    } else {
+      // Placeholder for other recommendation detail screens
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Opening $title'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
   Widget _buildHomeContent() {
@@ -118,10 +129,76 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Top Bar with Logo and Notification
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Logo and App Name
+              Row(
+                children: [
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.3),
+                        width: 1.5,
+                      ),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        '☪',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'My.Zikr',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+              // Notification Icon with Text
+              Row(
+                children: [
+                  const Text(
+                    'Morning duas',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white70,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Icon(
+                    Icons.notifications,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ],
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 32),
+
           // Greeting
           Text(
             'Salam Aleykoum $currentUserName!',
-            style: AppTheme.headingStyle.copyWith(fontSize: 28),
+            style: const TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
 
           const SizedBox(height: 32),
@@ -129,13 +206,18 @@ class _HomeScreenState extends State<HomeScreen> {
           // Dua of the day section
           const Text(
             'Dua of the day',
-            style: AppTheme.subheadingStyle,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
           ),
 
           const SizedBox(height: 16),
 
           DuaCard(
-            arabicText: duaOfTheDay,
+            arabicText: duaArabic,
+            transliteration: duaTransliteration,
             translation: duaTranslation,
             onPlayAudio: _onPlayAudio,
             onFavoriteToggle: _onFavoriteToggle,
@@ -143,19 +225,57 @@ class _HomeScreenState extends State<HomeScreen> {
 
           const SizedBox(height: 32),
 
-          // Customize recommendations button
-          SizedBox(
+          // Customize recommendations section
+          const Text(
+            'Customize your recommendations',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Customize button
+          Container(
             width: double.infinity,
-            child: ElevatedButton.icon(
-              onPressed: _onCustomizeRecommendations,
-              icon: const Icon(Icons.tune),
-              label: const Text('Customize your recommendations'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppTheme.cardBackground,
-                foregroundColor: AppTheme.textWhite,
-                side: const BorderSide(
-                  color: AppTheme.accentGold,
-                  width: 1,
+            decoration: BoxDecoration(
+              color: const Color(0xFF1B4332), // Dark green
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: _onCustomizeRecommendations,
+                borderRadius: BorderRadius.circular(12),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.sentiment_satisfied_alt,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                      const SizedBox(width: 16),
+                      const Expanded(
+                        child: Text(
+                          'How do you feel today?',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                      const Icon(
+                        Icons.arrow_forward,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -166,7 +286,11 @@ class _HomeScreenState extends State<HomeScreen> {
           // Recommendations section
           const Text(
             'Recommendations for you',
-            style: AppTheme.subheadingStyle,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
           ),
 
           const SizedBox(height: 16),
@@ -190,7 +314,17 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GradientBackground(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [
+              Color(0xFF1B4332), // Dark green/teal on left
+              Color(0xFF081C3A), // Darker blue/black on right
+            ],
+          ),
+        ),
         child: SafeArea(
           child: _getCurrentScreen(),
         ),

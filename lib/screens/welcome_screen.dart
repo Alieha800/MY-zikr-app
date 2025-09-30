@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../widgets/option_card.dart';
-import '../widgets/gradient_background.dart';
-import '../services/local_auth_service.dart';
+import '../services/auth_service.dart';
 import 'home_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -14,32 +13,35 @@ class WelcomeScreen extends StatefulWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
   final Set<String> selectedOptions = {};
-  final LocalAuthService _authService = LocalAuthService();
+  final AuthService _authService = AuthService();
 
   String get userName {
-    return _authService.currentUser?.displayName ?? "User";
+    final user = FirebaseAuth.instance.currentUser;
+    return user?.displayName ?? user?.email?.split('@')[0] ?? "User";
   }
+
+  final List<String> selectedOrder = [];
 
   final List<Map<String, dynamic>> options = [
     {
-      'title': 'To learn how to make duas',
-      'icon': Icons.school_outlined,
+      'title': 'To learn how to make douas',
+      'icon': Icons.menu_book,
     },
     {
-      'title': 'To join the duas community',
-      'icon': Icons.people_outline,
+      'title': 'To join the douas community',
+      'icon': Icons.volunteer_activism,
     },
     {
       'title': 'By curiosity',
-      'icon': Icons.explore_outlined,
+      'icon': Icons.search,
     },
     {
-      'title': 'To find Islamic reminders',
-      'icon': Icons.notifications_outlined,
+      'title': 'To find islamic reminders',
+      'icon': Icons.calendar_today,
     },
     {
       'title': 'For something else',
-      'icon': Icons.more_horiz,
+      'icon': Icons.public,
     },
   ];
 
@@ -47,8 +49,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     setState(() {
       if (selectedOptions.contains(option)) {
         selectedOptions.remove(option);
+        selectedOrder.remove(option);
       } else if (selectedOptions.length < 3) {
         selectedOptions.add(option);
+        selectedOrder.add(option);
       }
     });
   }
@@ -70,7 +74,17 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GradientBackground(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF1B4332), // Dark green
+              Color(0xFF081C3A), // Navy blue
+            ],
+          ),
+        ),
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
@@ -87,7 +101,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       },
                       icon: const Icon(
                         Icons.logout,
-                        color: AppTheme.textWhite,
+                        color: Colors.white,
                       ),
                       tooltip: 'Logout',
                     ),
@@ -96,37 +110,69 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
                 const SizedBox(height: 20),
 
-                // App Logo Placeholder
+                // Islamic Logo with Crescent
                 Container(
                   width: 100,
                   height: 100,
                   decoration: BoxDecoration(
-                    color: AppTheme.cardBackground,
-                    borderRadius: BorderRadius.circular(20),
+                    color: Colors.white.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.3),
+                      width: 2,
+                    ),
                   ),
-                  child: const Icon(
-                    Icons.mosque,
-                    size: 50,
-                    color: AppTheme.accentGold,
+                  child: const Center(
+                    child: Text(
+                      '☪',
+                      style: TextStyle(
+                        fontSize: 50,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
-                
+
+                const SizedBox(height: 12),
+
+                // Arabic Text "ذِكْر"
+                const Text(
+                  'ذِكْر',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    letterSpacing: 2,
+                  ),
+                ),
+
                 const SizedBox(height: 32),
-                
-                // Welcome Text
+
+                // Welcome Text - Large, centered white text
                 Text(
                   'Welcome $userName!',
-                  style: AppTheme.headingStyle.copyWith(fontSize: 28),
+                  style: const TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                   textAlign: TextAlign.center,
                 ),
-                
+
                 const SizedBox(height: 16),
-                
-                // Subtitle
-                const Text(
-                  'Please tell us what you are here for so we can customize your navigation. You can select up to 3.',
-                  style: AppTheme.bodyStyle,
-                  textAlign: TextAlign.center,
+
+                // Instruction Text - Smaller white text
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Text(
+                    'What brings you to My.Zikr? Choose up to 3 so we can customize your navigation.',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white,
+                      height: 1.5,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
                 
                 const SizedBox(height: 32),
@@ -155,23 +201,40 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 // Selection Counter
                 Text(
                   '${selectedOptions.length}/3 selected',
-                  style: AppTheme.bodyStyle.copyWith(
-                    color: AppTheme.textGray,
+                  style: const TextStyle(
+                    color: Colors.white70,
                     fontSize: 14,
                   ),
                 ),
-                
+
                 const SizedBox(height: 16),
-                
-                // Continue Button
+
+                // Continue Button - Light neutral color with dark text
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: selectedOptions.isNotEmpty ? _continue : null,
-                    child: const Text('Continue'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: const Color(0xFFF5F5DC), // Beige/off-white
+                      foregroundColor: const Color(0xFF1A1A1A), // Very dark gray/black
+                      disabledBackgroundColor: const Color(0xFFF5F5DC).withOpacity(0.5),
+                      disabledForegroundColor: const Color(0xFF1A1A1A).withOpacity(0.5),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: const Text(
+                      'Continue',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 24),
               ],
             ),

@@ -1,45 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
 import '../../services/auth_service.dart';
+import 'login_screen.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class EmailSignupScreen extends StatefulWidget {
+  const EmailSignupScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<EmailSignupScreen> createState() => _EmailSignupScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _EmailSignupScreenState extends State<EmailSignupScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final AuthService _authService = AuthService();
-  
+
   bool _isLoading = false;
   bool _obscurePassword = true;
 
   @override
   void dispose() {
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
-  Future<void> _signInWithEmail() async {
+  Future<void> _signUp() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
     try {
-      await _authService.signInWithEmailAndPassword(
+      final result = await _authService.registerWithEmailAndPassword(
         _emailController.text.trim(),
         _passwordController.text,
+        _nameController.text.trim(),
       );
 
-      if (mounted) {
+      if (result != null && mounted) {
         // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Login successful! Redirecting...'),
+            content: Text('Account created successfully! Redirecting...'),
             backgroundColor: Colors.green,
             duration: Duration(seconds: 1),
           ),
@@ -49,7 +54,10 @@ class _LoginScreenState extends State<LoginScreen> {
         await Future.delayed(const Duration(milliseconds: 800));
 
         // Pop all routes to go back to root (AuthWrapper)
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        // This will allow AuthWrapper to detect the auth state change
+        if (mounted) {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -65,7 +73,30 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-
+  void _showTermsAndConditions() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Terms and Conditions'),
+        content: const SingleChildScrollView(
+          child: Text(
+            'Terms and Conditions for ذِكْر\n\n'
+            'By using this app, you agree to our terms and conditions...\n\n'
+            '1. You will use this app for spiritual growth\n'
+            '2. You will respect the Islamic values\n'
+            '3. Your data will be kept private and secure\n\n'
+            'For full terms, please visit our website.',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 20),
 
                     // Islamic Logo with Crescent
                     Container(
@@ -142,48 +173,105 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 24),
 
-                    // Login Heading
+                    // Welcome Text
                     const Text(
-                      'Login',
+                      'Salam Alaykoum and welcome !',
                       style: TextStyle(
-                        fontSize: 32,
+                        fontSize: 16,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w300,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // Register Heading
+                    const Text(
+                      'Register',
+                      style: TextStyle(
+                        fontSize: 28,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
-                      textAlign: TextAlign.center,
                     ),
 
                     const SizedBox(height: 8),
 
-                    // Subtext
-                    const Text(
-                      'Sign in to continue.',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.white70,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-
-                    const SizedBox(height: 40),
-
-                    // EMAIL Label
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'EMAIL',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          letterSpacing: 1,
+                    // Already Registered Text with Link
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Already Registered? ',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.white70,
+                          ),
                         ),
-                      ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => const LoginScreen()),
+                            );
+                          },
+                          child: const Text(
+                            'Log in here',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              decoration: TextDecoration.underline,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
 
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 32),
+
+                    // Name Field
+                    TextFormField(
+                      controller: _nameController,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        hintText: 'Jiara Martins',
+                        hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25),
+                          borderSide: BorderSide.none,
+                        ),
+                        errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25),
+                          borderSide: const BorderSide(color: Colors.red, width: 1),
+                        ),
+                        focusedErrorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25),
+                          borderSide: const BorderSide(color: Colors.red, width: 1),
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey.withOpacity(0.3),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your name';
+                        }
+                        if (value.length < 2) {
+                          return 'Name must be at least 2 characters';
+                        }
+                        return null;
+                      },
+                    ),
+
+                    const SizedBox(height: 16),
 
                     // Email Field
                     TextFormField(
@@ -194,23 +282,23 @@ class _LoginScreenState extends State<LoginScreen> {
                         hintText: 'hello@reallygreatsite.com',
                         hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(25),
                           borderSide: BorderSide.none,
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(25),
                           borderSide: BorderSide.none,
                         ),
                         errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(25),
                           borderSide: const BorderSide(color: Colors.red, width: 1),
                         ),
                         focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(25),
                           borderSide: const BorderSide(color: Colors.red, width: 1),
                         ),
                         filled: true,
-                        fillColor: const Color(0xFF2D2D2D),
+                        fillColor: Colors.grey.withOpacity(0.3),
                         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                       ),
                       validator: (value) {
@@ -224,23 +312,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                     ),
 
-                    const SizedBox(height: 24),
-
-                    // PASSWORD Label
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'PASSWORD',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 16),
 
                     // Password Field
                     TextFormField(
@@ -260,28 +332,28 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(25),
                           borderSide: BorderSide.none,
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(25),
                           borderSide: BorderSide.none,
                         ),
                         errorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(25),
                           borderSide: const BorderSide(color: Colors.red, width: 1),
                         ),
                         focusedErrorBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(25),
                           borderSide: const BorderSide(color: Colors.red, width: 1),
                         ),
                         filled: true,
-                        fillColor: const Color(0xFF2D2D2D),
+                        fillColor: Colors.grey.withOpacity(0.3),
                         contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Please enter your password';
+                          return 'Please enter a password';
                         }
                         if (value.length < 6) {
                           return 'Password must be at least 6 characters';
@@ -290,20 +362,55 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                     ),
 
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 16),
 
-                    // Login Button
+                    // Terms and Conditions Text
+                    RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.white70,
+                        ),
+                        children: [
+                          const TextSpan(text: 'By clicking below, you agree '),
+                          TextSpan(
+                            text: 'terms and conditions',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              decoration: TextDecoration.underline,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = _showTermsAndConditions,
+                          ),
+                          const TextSpan(text: ' of '),
+                          const TextSpan(
+                            text: 'ذِكْر',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const TextSpan(text: '.'),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Sign Up Button
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton(
-                        onPressed: _isLoading ? null : _signInWithEmail,
+                        onPressed: _isLoading ? null : _signUp,
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           side: const BorderSide(color: Colors.white, width: 2),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(25),
                           ),
-                          backgroundColor: const Color(0xFF2D2D2D).withOpacity(0.5),
+                          backgroundColor: Colors.transparent,
                         ),
                         child: _isLoading
                             ? const SizedBox(
@@ -315,7 +422,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               )
                             : const Text(
-                                'Login',
+                                'Sign up',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
@@ -336,3 +443,4 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+

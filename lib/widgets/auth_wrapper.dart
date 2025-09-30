@@ -1,49 +1,38 @@
 import 'package:flutter/material.dart';
-import '../services/local_auth_service.dart';
-import '../screens/auth/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../screens/auth/signup_screen.dart';
 import '../screens/welcome_screen.dart';
 import '../widgets/loading_widget.dart';
 
-class AuthWrapper extends StatefulWidget {
+class AuthWrapper extends StatelessWidget {
   const AuthWrapper({super.key});
 
   @override
-  State<AuthWrapper> createState() => _AuthWrapperState();
-}
-
-class _AuthWrapperState extends State<AuthWrapper> {
-  final LocalAuthService _authService = LocalAuthService();
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _initializeAuth();
-  }
-
-  Future<void> _initializeAuth() async {
-    await _authService.initialize();
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Scaffold(
-        body: LoadingWidget(
-          message: 'Loading...',
-        ),
-      );
-    }
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        print('AuthWrapper - Connection state: ${snapshot.connectionState}');
+        print('AuthWrapper - Has data: ${snapshot.hasData}');
+        print('AuthWrapper - User: ${snapshot.data?.email}');
 
-    if (_authService.isSignedIn) {
-      return const WelcomeScreen();
-    }
+        // Show loading while checking auth state
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: LoadingWidget(
+              message: 'Loading...',
+            ),
+          );
+        }
 
-    return const LoginScreen();
+        // Show welcome screen if user is authenticated
+        if (snapshot.hasData && snapshot.data != null) {
+          return const WelcomeScreen();
+        }
+
+        // Show signup screen first (as requested by user)
+        return const SignupScreen();
+      },
+    );
   }
 }

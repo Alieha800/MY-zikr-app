@@ -41,46 +41,46 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDemo-Key-For-Testing-Only-Replace-With-Real',
-    appId: '1:123456789:web:demo-app-id-replace-with-real',
-    messagingSenderId: '123456789',
-    projectId: 'my-zikr-demo',
-    authDomain: 'my-zikr-demo.firebaseapp.com',
-    storageBucket: 'my-zikr-demo.appspot.com',
+    apiKey: 'AIzaSyD-JlmwXezh7DHYH2oM9FkIeMpX9d-ysrs',
+    appId: '1:506023460319:web:43c2ee21bc94b8568d586a',
+    messagingSenderId: '506023460319',
+    projectId: 'my-zkir-app',
+    authDomain: 'my-zkir-app.firebaseapp.com',
+    storageBucket: 'my-zkir-app.appspot.com',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyDemo-Android-Key-Replace-With-Real',
-    appId: '1:123456789:android:demo-app-id-replace-with-real',
-    messagingSenderId: '123456789',
-    projectId: 'my-zikr-demo',
-    storageBucket: 'my-zikr-demo.appspot.com',
+    apiKey: 'AIzaSyD-JlmwXezh7DHYH2oM9FkIeMpX9d-ysrs',
+    appId: '1:506023460319:android:43c2ee21bc94b8568d586a',
+    messagingSenderId: '506023460319',
+    projectId: 'my-zkir-app',
+    storageBucket: 'my-zkir-app.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyDemo-iOS-Key-Replace-With-Real',
-    appId: '1:123456789:ios:demo-app-id-replace-with-real',
-    messagingSenderId: '123456789',
-    projectId: 'my-zikr-demo',
-    storageBucket: 'my-zikr-demo.appspot.com',
-    iosBundleId: 'com.example.myZikrApp',
+    apiKey: 'AIzaSyD-JlmwXezh7DHYH2oM9FkIeMpX9d-ysrs',
+    appId: '1:506023460319:ios:43c2ee21bc94b8568d586a',
+    messagingSenderId: '506023460319',
+    projectId: 'my-zkir-app',
+    storageBucket: 'my-zkir-app.appspot.com',
+    iosBundleId: 'com.myzikr.app',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyDemo-macOS-Key-Replace-With-Real',
-    appId: '1:123456789:macos:demo-app-id-replace-with-real',
-    messagingSenderId: '123456789',
-    projectId: 'my-zikr-demo',
-    storageBucket: 'my-zikr-demo.appspot.com',
-    iosBundleId: 'com.example.myZikrApp',
+    apiKey: 'AIzaSyD-JlmwXezh7DHYH2oM9FkIeMpX9d-ysrs',
+    appId: '1:506023460319:macos:43c2ee21bc94b8568d586a',
+    messagingSenderId: '506023460319',
+    projectId: 'my-zkir-app',
+    storageBucket: 'my-zkir-app.appspot.com',
+    iosBundleId: 'com.myzikr.app',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyDemo-Windows-Key-Replace-With-Real',
-    appId: '1:123456789:windows:demo-app-id-replace-with-real',
-    messagingSenderId: '123456789',
-    projectId: 'my-zikr-demo',
-    authDomain: 'my-zikr-demo.firebaseapp.com',
-    storageBucket: 'my-zikr-demo.appspot.com',
+    apiKey: 'AIzaSyD-JlmwXezh7DHYH2oM9FkIeMpX9d-ysrs',
+    appId: '1:506023460319:windows:43c2ee21bc94b8568d586a',
+    messagingSenderId: '506023460319',
+    projectId: 'my-zkir-app',
+    authDomain: 'my-zkir-app.firebaseapp.com',
+    storageBucket: 'my-zkir-app.appspot.com',
   );
 }

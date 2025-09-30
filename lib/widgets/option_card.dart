@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 
 class OptionCard extends StatelessWidget {
   final String title;
@@ -21,47 +20,43 @@ class OptionCard extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         decoration: BoxDecoration(
-          color: isSelected 
-              ? AppTheme.accentGold.withOpacity(0.2)
-              : AppTheme.cardBackground,
-          borderRadius: BorderRadius.circular(16),
-          border: isSelected
-              ? Border.all(color: AppTheme.accentGold, width: 2)
-              : null,
+          // Selected: Light gray/off-white | Unselected: Dark green
+          color: isSelected
+              ? const Color(0xFFE8E8E8) // Light gray/off-white when selected
+              : const Color(0xFF1B4332), // Dark green when unselected
+          borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
           children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: isSelected 
-                    ? AppTheme.accentGold
-                    : AppTheme.textWhite.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                icon,
-                color: isSelected 
-                    ? AppTheme.primaryBlue
-                    : AppTheme.textWhite,
-                size: 24,
-              ),
+            // Icon on the left
+            Icon(
+              icon,
+              color: isSelected
+                  ? const Color(0xFF1A1A1A) // Dark color when selected
+                  : Colors.white, // White when unselected
+              size: 24,
             ),
             const SizedBox(width: 16),
+            // Text
             Expanded(
               child: Text(
                 title,
-                style: AppTheme.bodyStyle.copyWith(
+                style: TextStyle(
+                  color: isSelected
+                      ? const Color(0xFF1A1A1A) // Dark text when selected
+                      : Colors.white, // White text when unselected
+                  fontSize: 15,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),
               ),
             ),
+            // Green checkmark when selected
             if (isSelected)
               const Icon(
                 Icons.check_circle,
-                color: AppTheme.accentGold,
+                color: Color(0xFF2E7D32), // Green checkmark
                 size: 24,
               ),
           ],

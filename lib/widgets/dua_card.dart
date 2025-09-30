@@ -3,6 +3,7 @@ import '../theme/app_theme.dart';
 
 class DuaCard extends StatefulWidget {
   final String arabicText;
+  final String? transliteration;
   final String translation;
   final bool isFavorite;
   final VoidCallback? onFavoriteToggle;
@@ -11,6 +12,7 @@ class DuaCard extends StatefulWidget {
   const DuaCard({
     super.key,
     required this.arabicText,
+    this.transliteration,
     required this.translation,
     this.isFavorite = false,
     this.onFavoriteToggle,
@@ -39,58 +41,82 @@ class _DuaCardState extends State<DuaCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Arabic Text
-            Text(
-              widget.arabicText,
-              style: AppTheme.arabicTextStyle,
-              textAlign: TextAlign.center,
-              textDirection: TextDirection.rtl,
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFF5F5DC), // Light off-white/beige background
+        borderRadius: BorderRadius.circular(16),
+      ),
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Arabic Text (Elegant calligraphy)
+          Text(
+            widget.arabicText,
+            style: const TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF1A1A1A),
+              height: 1.8,
             ),
-            
+            textAlign: TextAlign.center,
+            textDirection: TextDirection.rtl,
+          ),
+
+          const SizedBox(height: 20),
+
+          // Transliteration (if provided)
+          if (widget.transliteration != null) ...[
+            Text(
+              widget.transliteration!,
+              style: const TextStyle(
+                fontSize: 16,
+                fontStyle: FontStyle.italic,
+                color: Color(0xFF4A4A4A),
+                height: 1.5,
+              ),
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: 16),
-            
-            // Translation
-            Text(
-              widget.translation,
-              style: AppTheme.translationTextStyle,
-              textAlign: TextAlign.center,
-            ),
-            
-            const SizedBox(height: 20),
-            
-            // Action Buttons
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Play Audio Button
-                IconButton(
-                  onPressed: widget.onPlayAudio,
-                  icon: const Icon(Icons.play_circle_outline),
-                  color: AppTheme.textWhite,
-                  iconSize: 32,
-                ),
-                
-                const SizedBox(width: 24),
-                
-                // Favorite Button
-                IconButton(
-                  onPressed: _toggleFavorite,
-                  icon: Icon(
-                    _isFavorite ? Icons.favorite : Icons.favorite_border,
-                  ),
-                  color: _isFavorite ? AppTheme.accentGold : AppTheme.textWhite,
-                  iconSize: 32,
-                ),
-              ],
-            ),
           ],
-        ),
+
+          // Translation
+          Text(
+            widget.translation,
+            style: const TextStyle(
+              fontSize: 15,
+              color: Color(0xFF4A4A4A),
+              height: 1.5,
+            ),
+            textAlign: TextAlign.center,
+          ),
+
+          const SizedBox(height: 24),
+
+          // Action Buttons
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Play Audio Button (Speaker icon on left)
+              IconButton(
+                onPressed: widget.onPlayAudio,
+                icon: const Icon(Icons.volume_up),
+                color: const Color(0xFF1A1A1A),
+                iconSize: 28,
+              ),
+
+              // Favorite Button (Heart icon on right)
+              IconButton(
+                onPressed: _toggleFavorite,
+                icon: Icon(
+                  _isFavorite ? Icons.favorite : Icons.favorite_border,
+                ),
+                color: _isFavorite ? Colors.red : const Color(0xFF1A1A1A),
+                iconSize: 28,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
