@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
-import '../widgets/gradient_background.dart';
 import '../widgets/dua_card.dart';
 import '../widgets/recommendation_card.dart';
 import '../widgets/custom_bottom_nav.dart';
